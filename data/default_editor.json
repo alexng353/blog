@@ -1,0 +1,50 @@
+[
+  {
+    "type": "banner",
+    "src": "/BHPUd0d.jpg"
+  },
+  {
+    "type": "title",
+    "content": "Making sure this works",
+    "name": "title"
+  },
+  {
+    "type": "author",
+    "content": "John Doe"
+  },
+  {
+    "type": "image",
+    "src": "https://picsum.photos/200/300"
+  },
+  {
+    "type": "video",
+    "src": "https://youtube.com/embed/PXqcHi2fkXI"
+  },
+  {
+    "type": "text",
+    "indent": false,
+    "content": "*italic*\n**bold**\n__underline__\n`code`\n__***underlined bold italics***__\n[link](https://google.com)\n\ncode blocks do not mix well with other render options!\n\n"
+  },
+  {
+    "type": "text",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mattis velit a nulla tincidunt, sit amet efficitur neque malesuada. Sed tempus dui ut dolor eleifend, ac fermentum metus suscipit. Mauris a condimentum lacus, eget imperdiet magna. Mauris eu sodales orci. Morbi vitae commodo massa. Duis lobortis sapien turpis, a aliquet elit fringilla ut. Vivamus eu eleifend augue, ut auctor lorem. Curabitur lorem mauris, placerat non turpis et, blandit blandit lorem. Donec id enim venenatis, condimentum nisl at, dapibus leo. Proin placerat orci ipsum, ut blandit purus posuere faucibus. Duis maximus vehicula nunc at vulputate. Sed ut nulla ultricies nunc lobortis rhoncus quis at turpis."
+  },
+  {
+    "type": "text",
+
+    "content": "Mauris eu tempor nulla. Aenean rutrum id quam eget accumsan. Etiam viverra sed tortor vel rhoncus. Morbi eget tincidunt justo. Donec aliquet posuere suscipit. Mauris pretium arcu et interdum dictum. Phasellus sagittis orci non orci fringilla, ac auctor metus imperdiet. Mauris nisl turpis, laoreet id vestibulum in, dictum eu tortor. Mauris eget risus urna. Mauris nec accumsan eros, in bibendum nulla."
+  },
+  {
+    "type": "text",
+    "content": "Cras tincidunt elementum ultricies. Mauris eu ullamcorper sem. Phasellus a mollis justo, ut pharetra ipsum. Integer a neque eu libero consequat molestie vitae eget felis. Maecenas vitae orci at lacus pretium tempor at quis nunc. Proin molestie nunc sed lacus egestas, quis tincidunt sapien pharetra. Donec eleifend euismod feugiat. Praesent dignissim rhoncus vestibulum. Praesent luctus aliquet ornare. Phasellus placerat, nulla vel sollicitudin suscipit, odio velit vulputate elit, eu consequat lacus turpis in lacus. Vestibulum vulputate ex sit amet dolor ultricies tristique. Suspendisse quam enim, tincidunt nec sagittis id, tempus ac mauris. Proin vel sagittis ipsum. Aliquam at ligula pulvinar, pretium ex id, cursus enim. Nullam nec tellus orci."
+  },
+  {
+    "type": "text",
+    "content": "Nunc faucibus est ac commodo venenatis. Nam vitae pretium nisi. Cras nec ante quis ante cursus dignissim. Duis venenatis urna et mauris euismod mattis. Donec eu interdum diam. Nullam semper feugiat ex, id eleifend mauris sollicitudin at. Ut odio enim, auctor sit amet orci nec, tristique faucibus urna. Vivamus molestie nec justo sollicitudin imperdiet. Sed sollicitudin tristique dolor, vel dictum arcu sodales fermentum."
+  },
+  {
+    "type": "header",
+    "content": "Header",
+    "name": "header"
+  }
+]

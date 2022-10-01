@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+.link {
+  color: #006699;
+  text-decoration: none;
+  &:hover {
+    color: #006699;
+    text-decoration: underline;
+  }
+}
+
+.bold_italic {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.text  {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.code {
+  font-family: 'Roboto Mono', monospace;
+  background-color: #3f3f3f;
+}
