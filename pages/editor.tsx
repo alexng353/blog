@@ -217,7 +217,7 @@ export default function Editor() {
             JSON.parse(data).map((field: Field, index: any) => {
               // return <Render key={index} fields={[field]} />;
               return (
-                <div className="mt-4">
+                <div className="mt-4" key={index}>
                   <FieldEditor
                     field={field}
                     index={index}
@@ -236,14 +236,14 @@ export default function Editor() {
                     onInsertAbove={(e) => {
                       const tmp = JSON.parse(data);
                       // insert a new element at index
-                      console.log(e);
+                      // console.log(e);
                       tmp.splice(index, 0, e);
                       setData(JSON.stringify(tmp));
                     }}
                     onInsertBelow={(e) => {
                       const tmp = JSON.parse(data);
                       // insert a new element at index
-                      console.log(e);
+                      // console.log(e);
                       tmp.splice(index + 1, 0, e);
                       setData(JSON.stringify(tmp));
                     }}
