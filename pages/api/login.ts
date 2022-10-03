@@ -26,11 +26,14 @@ export default async function handler(
       },
     });
 
+    // hash password sha256
+    const hash = crypto.createHash("sha256").update(password).digest("hex");
+
     if (!user) {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
-    if (user.password !== password) {
+    if (user.password !== hash) {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }

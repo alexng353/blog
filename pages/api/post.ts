@@ -10,7 +10,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { data } = req.body;
+  const data = req.body;
   if (!req.headers.authorization) {
     res.status(401).json({ error: "Unauthorized" });
     return;
@@ -25,11 +25,19 @@ export default async function handler(
       email: email,
     },
   });
+
+  // make sure user is admin
+
   if (!user) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
-  if (user.password !== password) {
+  if (user.admin !== true) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const hash = crypto.createHash("sha256").update(password).digest("hex");
+  if (user.password !== hash) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
@@ -48,5 +56,7 @@ export default async function handler(
       },
     });
     res.status(200).json({ post });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 }
