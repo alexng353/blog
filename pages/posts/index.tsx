@@ -27,7 +27,7 @@ export async function getStaticProps() {
   // turn all the posts[n].createdAt into a string
 
   let posts = tmp.map((post) => {
-    console.log(post.author);
+    // console.log(post.author);
 
     return {
       ...post,
@@ -42,7 +42,7 @@ export async function getStaticProps() {
 }
 
 export default function Posts({ posts }: any) {
-  console.log(posts);
+  // console.log(posts);
 
   return (
     <div className="flex justify-center w-full">
