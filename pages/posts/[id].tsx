@@ -46,6 +46,7 @@ export async function getStaticProps({ params }: any) {
 
   return {
     props: { postString },
+    revalidate: 10,
   };
 }
 
