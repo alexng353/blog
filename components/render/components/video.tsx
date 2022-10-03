@@ -11,7 +11,7 @@ export default function VideoEmbed({ src }: VideoProps) {
   }
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden my-4">
       <iframe
         width="560"
         height="315"

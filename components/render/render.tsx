@@ -50,7 +50,7 @@ function RenderComponent({
           </div>
         );
       }
-      return <>{src && <img src={src} alt={name} />}</>;
+      return <>{src && <img src={src} alt={name} className="my-4" />}</>;
 
     case "title":
       return (

@@ -33,9 +33,9 @@ export default function Editor() {
             field.content
               ? (field.content = e.target.value)
               : (field.src = e.target.value);
-            setTmp((prev) => {
+            setData((prev) => {
               prev[props.index] = field;
-              return JSON.parse(JSON.stringify(prev));
+              return prev;
             });
           }}
         />
@@ -55,7 +55,7 @@ export default function Editor() {
             Click Me
           </button>
         </div>
-        {tmp.map((field: Field, index) => {
+        {data.map((field: Field, index) => {
           return (
             <div key={index}>
               <TextBoxMaker field={field} index={index} />

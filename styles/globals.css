@@ -2,19 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-button {
-  @apply bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded transition-all;
+
+pre {
+  white-space: pre-wrap; /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
-
-input {
-  @apply border border-gray-300 rounded p-2 bg-gray-200 bg-opacity-50;
-
-  &:focus {
-    @apply outline-none;
-  }
-}
-
-
 
 .editor .editorLineNumber {
   position: absolute;
@@ -109,7 +104,7 @@ pre {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background-color: #42424200;
+  background-color: #424242;
 }
 
 ::-webkit-scrollbar-thumb {
