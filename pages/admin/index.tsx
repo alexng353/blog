@@ -9,6 +9,10 @@ const Chart = dynamic(() => import("components/admin/chart"), {
   ssr: false,
 });
 
+const Content = dynamic(() => import("components/admin/content"), {
+  ssr: false,
+});
+
 export default function AdminPage() {
   // login
   const [admin, setAdmin] = useState(false);
@@ -107,6 +111,7 @@ export default function AdminPage() {
                   );
                 })}
             </div>
+            <Content />
           </div>
         </div>
       </>
