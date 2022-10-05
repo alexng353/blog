@@ -314,11 +314,11 @@ export default function Editor() {
         <div className="relative">
           <div className="h-8"></div>
           <div className="top-0 right-0 h-8 absolute">
+            <span className="mx-4">
+              Currently editing {mode === "create" ? "new" : "existing"} post{" "}
+              {id}
+            </span>
             <a href="/tutorial" target="_blank">
-              <span className="mx-4">
-                Currently editing {mode === "create" ? "new" : "existing"} post{" "}
-                {id}
-              </span>
               <button className="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-700 transition-all">
                 Tutorial
               </button>

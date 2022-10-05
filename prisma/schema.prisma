@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  id        Int      @default(autoincrement()) @id
+  id        Int      @id @default(autoincrement())
   email     String   @unique
   name      String?
   posts     Post[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   admin     Boolean  @default(false)
+  writer    Boolean  @default(false)
   password  String
 }
 
@@ -30,4 +31,5 @@ model Post {
   published Boolean  @default(false)
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
+  views     Int      @default(0)
 }

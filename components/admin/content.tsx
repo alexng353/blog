@@ -25,8 +25,10 @@ export default function Content() {
       <table>
         <tr className="font-bold text-center">
           <td>Title</td>
+          <td className="w-32">View Button</td>
           <td className="w-32">Edit button</td>
-          <td>Author</td>
+          <td className="w-32">Delete button</td>
+          <td className="w-32">Author</td>
           <td className="w-12">id</td>
         </tr>
         {data &&
@@ -36,6 +38,16 @@ export default function Content() {
                 <td>{post.title}</td>
                 <td>
                   <div className="w-full flex justify-center">
+                    <a
+                      className="bg-green-500 hover:bg-green-700 rounded-lg px-4 py-1 text-white"
+                      href={`/posts/${post.id}`}
+                    >
+                      view
+                    </a>
+                  </div>
+                </td>
+                <td>
+                  <div className="w-full flex justify-center">
                     <button
                       className="bg-blue-500 hover:bg-blue-700 rounded-lg px-4 py-1 text-white"
                       onClick={() => {
@@ -43,6 +55,18 @@ export default function Content() {
                       }}
                     >
                       edit
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <div className="w-full flex justify-center">
+                    <button
+                      className="bg-red-500 hover:bg-red-700 rounded-lg px-4 py-1 text-white"
+                      onClick={() => {
+                        router.push(`/admin/editor?id=${post.id}`);
+                      }}
+                    >
+                      delete
                     </button>
                   </div>
                 </td>

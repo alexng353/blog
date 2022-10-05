@@ -23,7 +23,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         })
         .then((post) => {
-          res.status(200).json(post)
+          prisma.$disconnect()
+          return res.status(200).json(post)
         })
       prisma.$disconnect()
       return
@@ -42,9 +43,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         })
         .then((post) => {
-          res.status(200).json(post)
+          prisma.$disconnect()
+          return res.status(200).json(post)
         })
-      prisma.$disconnect()
       return
     }
   }
@@ -55,14 +56,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         orderBy: {
           createdAt: 'desc',
         },
-        // select: {
-        //   id: true,
-        //   title: true,
-        //   content: content === 'false' ? false : true,
-        //   createdAt: true,
-        //   updatedAt: true,
-        //   published: true,
-        // },
         include: {
           author: {
             select: {
@@ -75,10 +68,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       })
       .then((posts) => {
         prisma.$disconnect()
-        res.status(200).json(posts)
+        return res.status(200).json(posts)
       })
       .catch((err) => {
-        res.status(500).json({ error: err })
+        prisma.$disconnect()
+        return res.status(500).json({ error: err })
       })
   } else {
     prisma.post
@@ -90,6 +84,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           createdAt: true,
           updatedAt: true,
           published: true,
+          views: true,
           author: {
             select: {
               name: true,
@@ -103,7 +98,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       })
       .then((posts) => {
         prisma.$disconnect()
-        res.status(200).json({ posts })
+        return res.status(200).json({ posts })
       })
   }
 }
