@@ -15,6 +15,7 @@ export default async function handler(
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
+
     const auth = Buffer.from(req.headers.authorization, "base64")
       .toString()
       .split(":");
@@ -23,6 +24,13 @@ export default async function handler(
     const user = await prisma.user.findUnique({
       where: {
         email: email,
+      },
+      select: {
+        id: true,
+        password: true,
+        email: true,
+        admin: true,
+        name: true,
       },
     });
 
@@ -37,6 +45,11 @@ export default async function handler(
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
-    res.status(200).json({ message: "success" });
+    res.status(200).json({
+      message: "success",
+      admin: user.admin,
+      name: user.name,
+      email: user.email,
+    });
   }
 }

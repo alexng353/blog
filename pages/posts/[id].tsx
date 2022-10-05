@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { PrismaClient } from "@prisma/client";
 import Render from "components/render";
+import { useEffect } from "react";
 
 const prisma = new PrismaClient();
 
@@ -58,6 +59,19 @@ export default function Post({ postString }: any) {
   }
   // console.log(post);
 
+  useEffect(() => {
+    fetch("/api/views", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: post.id }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }, []);
   return (
     <div className="flex w-full justify-center">
       <div className="max-w-5xl">

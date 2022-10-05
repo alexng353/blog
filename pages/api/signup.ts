@@ -23,11 +23,14 @@ export default async function handler(
             .digest("hex"),
         },
       });
+      prisma.$disconnect();
       res.status(200).json({ user });
     } catch (error) {
+      prisma.$disconnect();
       res.status(500).json({ error });
     }
   } else {
+    prisma.$disconnect();
     res.status(405).json({ error: "Method not allowed" });
   }
 }

@@ -1,18 +1,18 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from "next";
 
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { n, s, content, id } = req.query
+  const { n, s, content, id } = req.query;
 
   if (id) {
-    if (id === 'latest') {
+    if (id === "latest") {
       prisma.post
         .findFirst({
           orderBy: {
-            id: 'desc',
+            id: "desc",
           },
           include: {
             author: {
@@ -23,10 +23,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         })
         .then((post) => {
-          res.status(200).json(post)
-        })
-      prisma.$disconnect()
-      return
+          prisma.$disconnect();
+          return res.status(200).json(post);
+        });
+      prisma.$disconnect();
+      return;
     } else {
       prisma.post
         .findUnique({
@@ -42,10 +43,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         })
         .then((post) => {
-          res.status(200).json(post)
-        })
-      prisma.$disconnect()
-      return
+          prisma.$disconnect();
+          return res.status(200).json(post);
+        });
+      return;
     }
   }
   // sort posts by createdAt, then return between post n and s
@@ -53,16 +54,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     prisma.post
       .findMany({
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
-        // select: {
-        //   id: true,
-        //   title: true,
-        //   content: content === 'false' ? false : true,
-        //   createdAt: true,
-        //   updatedAt: true,
-        //   published: true,
-        // },
         include: {
           author: {
             select: {
@@ -74,22 +67,24 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         take: Number(s),
       })
       .then((posts) => {
-        prisma.$disconnect()
-        res.status(200).json(posts)
+        prisma.$disconnect();
+        return res.status(200).json(posts);
       })
       .catch((err) => {
-        res.status(500).json({ error: err })
-      })
+        prisma.$disconnect();
+        return res.status(500).json({ error: err });
+      });
   } else {
     prisma.post
       .findMany({
         select: {
           id: true,
           title: true,
-          content: content === 'false' ? false : true,
+          content: content === "false" ? false : true,
           createdAt: true,
           updatedAt: true,
           published: true,
+          views: true,
           author: {
             select: {
               name: true,
@@ -97,13 +92,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         },
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
         take: n ? parseInt(n as string) : 10,
       })
       .then((posts) => {
-        prisma.$disconnect()
-        res.status(200).json({ posts })
-      })
+        prisma.$disconnect();
+        return res.status(200).json({ posts });
+      });
   }
 }

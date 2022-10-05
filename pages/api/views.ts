@@ -4,18 +4,23 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  // set the admin setting of the user with email alexng353@gmail.com to true
-  prisma.user
+  // grab id from query
+  const { id } = req.body;
+  console.log(id);
+
+  prisma.post
     .update({
       where: {
-        email: "alexng353@gmail.com",
+        id: Number(id),
       },
       data: {
-        admin: true,
+        views: {
+          increment: 1,
+        },
       },
     })
-    .then(() => {
+    .then((post) => {
       prisma.$disconnect();
-      res.status(200).json({ message: "success" });
+      res.status(200).json(post);
     });
 }

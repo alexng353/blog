@@ -1,9 +1,14 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 export default function Test() {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
   const [showPass, setShowPass] = useState(false);
+  const router = useRouter();
+  // grab ?redirect
+  // const redirect = router.query.redirect ? router.query.redirect[0] : "/";
+  const redirect = router.query.redirect;
   return (
     <div className="flex flex-col w-96 gap-4 m-4 shadow-md rounded-xl p-4 bg-gray-100 ">
       <input
@@ -51,10 +56,20 @@ export default function Test() {
               "Content-Type": "application/json",
               authorization: basic,
             },
-          }).then((res) => {
-            res.json().then((data) => console.log(data));
-          });
-          localStorage.setItem("basic", basic);
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.error) {
+                alert(data.error);
+              } else {
+                localStorage.setItem("basic", basic);
+                router.push(redirect as string);
+              }
+            });
+
+          // if (redirect) {
+          //   router.push(redirect as string);
+          // }
         }}
       >
         login

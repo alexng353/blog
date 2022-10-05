@@ -16,7 +16,6 @@ export default async function handler(
       .toString()
       .split(":");
     const [password, username] = auth;
-
     res.json({ password, username });
   }
 }
