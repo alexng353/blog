@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { PrismaClient } from "@prisma/client";
 import Render from "components/render";
+import { useEffect } from "react";
 
 const prisma = new PrismaClient();
 
@@ -53,6 +54,19 @@ export async function getStaticProps({ params }: any) {
 export default function Post({ postString }: any) {
   const post = postString;
   const router = useRouter();
+  useEffect(() => {
+    fetch("/api/views", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: post.id }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }, [post.id]);
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
