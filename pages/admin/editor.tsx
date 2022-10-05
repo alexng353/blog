@@ -1,75 +1,512 @@
-import { useState } from "react";
-import Render, { Field } from "components/render/render";
-import TextareaAutosize from "react-textarea-autosize";
+import { Field } from "components/render/render";
+import Render from "components/render";
+import { Key, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+
+import styles from "styles/editor.module.css";
 
 import defaultData from "data/default_editor.json";
-// import Render from "@/components/render";
+import { TextareaAutosize } from "@mui/material";
 
-export default function Editor() {
-  const [data, setData] = useState<Field[]>(
-    JSON.parse(JSON.stringify(defaultData))
-  );
-  const [tmp, setTmp] = useState(data);
-  function Checker() {
-    try {
-      JSON.parse(JSON.stringify(data));
-      return true;
-    } catch (error) {
-      return false;
-    }
+type KeyJoined = Key | null | undefined;
+
+function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function FieldEditor(props: {
+  field: Field;
+  index: KeyJoined;
+  onChange: (e: any) => void;
+  onDelete: () => void;
+  onInsertAbove: (e: any) => void;
+  onInsertBelow: (e: any) => void;
+}) {
+  const field = props.field;
+  // if banner, image or video, use src
+  let placeholder;
+  if (field.type === "banner" || field.type === "image") {
+    placeholder = `${field.type} URL`;
+  } else if (field.type === "video") {
+    placeholder = "Video URL (YouTube)";
+  } else if (
+    field.type === "author" ||
+    field.type === "title" ||
+    field.type === "header"
+  ) {
+    placeholder = `${capitalize(field.type)}`;
+  } else {
+    placeholder = "Content";
   }
 
-  function TextBoxMaker(props: { field: Field; index: any }) {
-    const field = JSON.parse(JSON.stringify(props.field));
-    // const field = props.field;
-    return (
-      <div>
-        <label>{field.type}</label>
-        <br />
-        <TextareaAutosize
-          defaultValue={field.content ? field.content : field.src}
-          className="w-full bg-black cursor-auto p-2"
-          onChange={(e) => {
-            field.content
-              ? (field.content = e.target.value)
-              : (field.src = e.target.value);
-            setTmp((prev) => {
-              prev[props.index] = field;
-              return JSON.parse(JSON.stringify(prev));
-            });
-          }}
-        />
-      </div>
-    );
-  }
+  const [showOptions, setShowOptions] = useState(false);
+
   return (
-    <div className="min-h-screen w-full grid grid-cols-2 pl-4 pt-4 bg-gray-800 text-white cursor-white">
-      <div className="flex flex-col gap-4">
-        <div className="w-full">
-          <button
-            className="bg-gray-700 p-2 rounded-md"
-            onClick={() => {
-              setData(tmp);
-            }}
-          >
-            Click Me
-          </button>
-        </div>
-        {tmp.map((field: Field, index) => {
-          return (
-            <div key={index}>
-              <TextBoxMaker field={field} index={index} />
+    <div
+      className={styles.editblock}
+      onMouseOver={() => setShowOptions(true)}
+      onMouseLeave={() => setShowOptions(false)}
+    >
+      <div className="relative">
+        <h1 className={styles.title}>{capitalize(field.type)}</h1>
+
+        <div className="absolute right-0 top-0 min-w-full h-full">
+          {showOptions && (
+            <div className="absolute right-0 top-0 flex gap-4">
+              <DropDown
+                callback={(e) => {
+                  props.onInsertBelow(e);
+                }}
+                type="insert (below)"
+              />
+              <DropDown
+                callback={(e) => {
+                  props.onInsertAbove(e);
+                }}
+              />
+              <button
+                className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-700 transition-all"
+                onClick={props.onDelete}
+              >
+                Delete
+              </button>
             </div>
-          );
-        })}
+          )}
+        </div>
       </div>
-      <div className="px-4">
-        {Checker() ? (
-          <Render fields={data} />
+      <div className={styles.inputwrapper}>
+        {field.type !== "text" ? (
+          <input
+            type="text"
+            className={styles.input}
+            defaultValue={field.src ? field.src : field.content}
+            placeholder={placeholder}
+            onChange={(e) => {
+              // change field src and run props.onchange with it
+              // field.src = e.target.value;
+              // if type is banner, image or video, use src
+              if (
+                field.type === "banner" ||
+                field.type === "image" ||
+                field.type === "video"
+              ) {
+                field.src = e.target.value;
+              } else {
+                field.content = e.target.value;
+              }
+              props.onChange(field);
+            }}
+          />
         ) : (
-          <div className="text-red-500">Invalid JSON</div>
+          <TextareaAutosize
+            className={styles.textarea}
+            defaultValue={field.content}
+            onChange={(e) => {
+              field.content = e.target.value;
+              props.onChange(field);
+            }}
+          />
         )}
       </div>
     </div>
+  );
+}
+
+export default function Editor() {
+  const [data, setData] = useState<string>(JSON.stringify(defaultData));
+  const [mode, setMode] = useState<"create" | "update">("create");
+  const [id, setId] = useState<string>("");
+  const router = useRouter();
+  // function to generate json file from data and download
+  function downloadJSON() {
+    const element = document.createElement("a");
+    const file = new Blob([JSON.stringify(JSON.parse(data), null, 2)], {
+      type: "text/plain",
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = new Date().toString() + ".json";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  }
+  // save to localstorage
+  useEffect(() => {
+    if (data !== JSON.stringify(defaultData)) {
+      localStorage.setItem("editor_data", data);
+    }
+  }, [data]);
+
+  // onstartup, grab data from localstorage
+  useEffect(() => {
+    const localData = localStorage.getItem("editor_data");
+    if (localData) {
+      setData(localData);
+    }
+
+    // if id is present, set mode to update
+    if (router.query.id) {
+      const res = GrabDataWithId(router.query.id as string);
+      if (res) {
+        setMode("update");
+        setId(router.query.id as string);
+      }
+
+      // setMode("update");
+      // setId(router.query.id as string);
+      // console.log(router.query.id);
+    }
+  }, [router.query.id]);
+
+  function resetData() {
+    setData(JSON.stringify(defaultData));
+  }
+
+  // grab "basic" from localstorage and fetch
+  function postData() {
+    const authorization = localStorage.getItem("basic");
+    if (!authorization) {
+      alert("You are not logged in!");
+      return;
+    }
+    // loop over the data and find the first title
+    const parsedData = JSON.parse(data);
+    let title = "";
+    for (let i = 0; i < parsedData.length; i++) {
+      if (parsedData[i].type === "title") {
+        title = parsedData[i].content;
+        break;
+      }
+    }
+    if (title === "") {
+      alert("You need to have a title!");
+      return;
+    }
+
+    const tmp = {
+      title: title,
+      content: data,
+    };
+    if (mode === "create") {
+      fetch("/api/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: authorization,
+        },
+        body: JSON.stringify(tmp),
+      })
+        .then((res) => res.json())
+        .then((data) => console.log(data));
+    } else {
+      fetch(`/api/update?id=${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: authorization,
+        },
+        body: JSON.stringify(tmp),
+      })
+        .then((res) => res.json())
+        .then((data) => console.log(data));
+    }
+  }
+
+  function GrabDataWithId(id: string) {
+    if (Number(id).toString() === "NaN") {
+      return false;
+    }
+    fetch(`/api/posts?id=${id}`)
+      .then((res) => res.json())
+      .then((res) => {
+        // console.log(res);
+        if (res?.content) {
+          setData(res.content);
+          console.log("update");
+
+          setMode("update");
+          setId(id.toString());
+          return true;
+        } else {
+          // console.log(res);
+
+          alert(`No post with ID ${id}`);
+        }
+      });
+  }
+
+  return (
+    <>
+      <div className="h-12 flex gap-4 pl-4 pt-4 bg-gray-800">
+        <button
+          className="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-700 transition-all"
+          onClick={downloadJSON}
+        >
+          Download JSON
+        </button>
+        <button
+          className="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-700 transition-all"
+          onClick={resetData}
+        >
+          Reset to Default
+        </button>
+        <button
+          className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-700 transition-all"
+          onClick={postData}
+        >
+          Post Data
+        </button>
+        {/* file input */}
+        <input
+          type="file"
+          id="file"
+          accept=".json"
+          className="bg-purple-500 text-white px-2 rounded-md hover:bg-purple-700 transition-all"
+          onChange={(e) => {
+            if (!e.target.files || !e.target) {
+              return;
+            }
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const text = e.target?.result;
+              setData(text as string);
+            };
+            reader.readAsText(file);
+          }}
+        />
+        <button
+          className="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-700 transition-all"
+          onClick={() => {
+            const id = prompt("What ID do you want");
+            GrabDataWithId(id!);
+          }}
+        >
+          Import from DB
+        </button>
+        {mode === "update" ? (
+          <button
+            className="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-700 transition-all"
+            onClick={() => {
+              if (mode === "update") {
+                setMode("create");
+                setId("");
+              }
+            }}
+          >
+            Back to create mode (current mode: {mode})
+          </button>
+        ) : (
+          <button
+            className="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-700 transition-all"
+            onClick={() => {
+              const id = prompt("What ID do you want");
+              if (Number(id).toString() === "NaN") {
+                return;
+              }
+              setId(id!);
+              setMode("update");
+            }}
+          >
+            Choose ID to update (current mode: {mode})
+          </button>
+        )}
+      </div>
+      <div className="min-h-screen w-full grid grid-cols-2 pl-4 pt-4 gap-4 pr-2 bg-gray-800 text-white cursor-white">
+        <div className="relative">
+          <div className="h-8"></div>
+          <div className="top-0 right-0 h-8 absolute">
+            <a href="/tutorial" target="_blank">
+              <span className="mx-4">
+                Currently editing {mode === "create" ? "new" : "existing"} post{" "}
+                {id}
+              </span>
+              <button className="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-700 transition-all">
+                Tutorial
+              </button>
+            </a>
+          </div>
+
+          {JSON.parse(data).length > 0 ? (
+            JSON.parse(data).map((field: Field, index: any) => {
+              // return <Render key={index} fields={[field]} />;
+              return (
+                <div className="mt-4" key={index}>
+                  <FieldEditor
+                    field={field}
+                    index={index}
+                    onChange={(e) => {
+                      const tmp = JSON.parse(data);
+                      tmp[index] = e;
+                      setData(JSON.stringify(tmp));
+                      // console.log(index);
+                    }}
+                    onDelete={() => {
+                      const tmp = JSON.parse(data);
+                      // remove the element at index
+                      tmp.splice(index, 1);
+                      setData(JSON.stringify(tmp));
+                    }}
+                    onInsertAbove={(e) => {
+                      const tmp = JSON.parse(data);
+                      // insert a new element at index
+                      // console.log(e);
+                      tmp.splice(index, 0, e);
+                      setData(JSON.stringify(tmp));
+                    }}
+                    onInsertBelow={(e) => {
+                      const tmp = JSON.parse(data);
+                      // insert a new element at index
+                      // console.log(e);
+                      tmp.splice(index + 1, 0, e);
+                      setData(JSON.stringify(tmp));
+                    }}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <div className="ml-96">
+              <DropDown
+                callback={(e) => {
+                  setData(JSON.stringify([e]));
+                }}
+                type="insert"
+                position="left"
+              />
+            </div>
+          )}
+        </div>
+        {/* <div className="overflow-scroll break-words">
+        <pre>{data && JSON.stringify(JSON.parse(data), null, 2)}</pre>
+      </div> */}
+        <div>{data && <Render fields={JSON.parse(data)} />}</div>
+      </div>
+      <pre className="text-white">
+        <h1 className="text-2xl text-center">OUTPUT</h1>
+        <Markdown source={JSON.stringify(JSON.parse(data), null, 2)} />
+      </pre>
+      <div className="min-h-[25vh] bg-gray-800"></div>
+    </>
+  );
+}
+import React from "react";
+import ReactMarkdown from "react-markdown";
+
+import remarkGfm from "remark-gfm";
+import remarkSlug from "remark-slug";
+import remarkToc from "remark-toc";
+
+import rehypeHighlight from "rehype-highlight";
+import rehypeRaw from "rehype-raw";
+
+import mdstyles from "styles/md.module.css";
+
+// import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+
+interface MarkdownProps {
+  source: string;
+}
+
+function Markdown({ source }: MarkdownProps) {
+  // add ``` to both sides of source
+  source = "```json\n" + source + "\n```";
+  return (
+    <ReactMarkdown
+      className={mdstyles.markdown_body}
+      remarkPlugins={[remarkSlug, remarkToc, remarkGfm]}
+      // rehypePlugins={[rehypeHighlight, rehypeRaw]}
+      rehypePlugins={[[rehypeHighlight, { ignoreMissing: true }], rehypeRaw]}
+    >
+      {source}
+    </ReactMarkdown>
+  );
+}
+
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/solid";
+
+function classNames(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
+function DropDown(props: {
+  callback?: (e: any) => void;
+  type?: string;
+  position?: string;
+}) {
+  const types = [
+    {
+      type: "banner",
+      src: "/BHPUd0d.jpg",
+    },
+    {
+      type: "title",
+      content: "Making sure this works",
+      name: "title",
+    },
+    {
+      type: "author",
+      content: "John Doe",
+    },
+    {
+      type: "image",
+      src: "https://picsum.photos/200/300",
+    },
+    {
+      type: "video",
+      src: "https://youtube.com/embed/PXqcHi2fkXI",
+    },
+    {
+      type: "text",
+      indent: false,
+      content:
+        "*italic*\n**bold**\n__underline__\n`code`\n__***underlined bold italics***__\n[link](https://google.com)\n\ncode blocks do not mix well with other render options!\n\n",
+    },
+  ];
+  return (
+    <Menu as="div" className="relative inline-block text-left">
+      <div>
+        <Menu.Button className="inline-flex justify-center w-full rounded-md shadow-sm px-4 py-2 bg-green-600 text-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          {props.type ? props.type : "Insert (above)"}
+          <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+        </Menu.Button>
+      </div>
+
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        {/* edit the below className (left-0, right-0) to change which way the menu pops out */}
+        <Menu.Items
+          className={`origin-top-right absolute ${
+            props.position ? props.position : "right"
+          }-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-[100]`}
+        >
+          <div className="py-1">
+            {types.map((type, index) => (
+              <Menu.Item key={index}>
+                {({ active }) => (
+                  <button
+                    onClick={() => {
+                      props.callback && props.callback(type);
+                    }}
+                    className={classNames(
+                      active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                      "block w-full text-left px-4 py-2 text-sm"
+                    )}
+                  >
+                    {type.type}
+                  </button>
+                )}
+              </Menu.Item>
+            ))}
+          </div>
+        </Menu.Items>
+      </Transition>
+    </Menu>
   );
 }

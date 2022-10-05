@@ -43,7 +43,7 @@ export async function getStaticProps({ params }: any) {
     createdAt: post.createdAt.toString(),
     updatedAt: post.updatedAt.toString(),
   };
-
+  prisma.$disconnect();
   return {
     props: { postString },
     revalidate: 10,
