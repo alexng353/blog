@@ -55,18 +55,20 @@ export default function Post({ postString }: any) {
   const post = postString;
   const router = useRouter();
   useEffect(() => {
-    fetch("/api/views", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: post.id }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
-  }, [post.id]);
+    if (typeof window !== "undefined") {
+      fetch("/api/views", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: post.id }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+        });
+    }
+  }, []);
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
