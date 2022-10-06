@@ -22,7 +22,7 @@ export async function getStaticProps() {
   // get all posts, include author name
   const tmp = await prisma.post.findMany({
     // limit to 50 posts
-    take: 50,
+    take: 10,
     // sort by date
     orderBy: {
       createdAt: "desc",
@@ -36,7 +36,6 @@ export async function getStaticProps() {
       },
     },
   });
-
   // turn all the posts[n].createdAt into a string
   prisma.$disconnect();
   let posts = tmp.map((post) => {
@@ -67,8 +66,8 @@ export default function Posts({ posts }: any) {
     if (page) {
       // const start = (page - 1) * 50;
       // const stop = start + 50;
-      const start = (page - 1) * 50;
-      const take = 50;
+      const start = (page - 1) * 10;
+      const take = 10;
 
       fetch(`http://localhost:3000/api/posts?n=${start}&content=true&s=${take}`)
         .then((res) => res.json())
@@ -104,13 +103,13 @@ export default function Posts({ posts }: any) {
   return (
     <>
       <NavBar />
-      <div className="w-full mb-10 p-5">
+      <div className="w-full mb-10 p-4">
         {show && (
           <>
             <div className="flex justify-center w-full">
               <div className="max-w-5xl w-full">
                 <h1 className="text-4xl font-bold">Posts</h1>
-                <div className="lg:grid grid-cols-2 gap-4">
+                <div className="lg:grid grid-cols-2 gap-x-4">
                   {data.map((post: any) => {
                     const creation = new Date(post.createdAt);
                     // custom date format, include time to minute accuracy
@@ -118,7 +117,7 @@ export default function Posts({ posts }: any) {
                       <div className="relative" key={post.id}>
                         <a
                           href={`/posts/${post.id}`}
-                          className="flex flex-col w-full p-4 my-4 bg-gray-100 rounded-lg shadow-lg shadow-blue-500 border-blue-500 border hover:bg-gray-200 relative"
+                          className="flex flex-col w-full p-4 my-4 bg-gray-100 rounded-lg shadow-lg shadow-gray-500 border-blue-500 border hover:bg-gray-200 relative"
                         >
                           <h1 className="font-bold">{post.title}</h1>
                           <p className="flex">
@@ -153,7 +152,7 @@ export default function Posts({ posts }: any) {
                 )}
               </div>
             </div>
-            <div className="w-full flex justify-center mt-8">
+            <div className="w-full flex justify-center mt-4">
               <div className="max-w-[512px] w-full flex justify-between gap-4">
                 <button
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-48"
@@ -164,7 +163,7 @@ export default function Posts({ posts }: any) {
                     }
                   }}
                 >
-                  previous page
+                  Previous Page
                 </button>
                 <button
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-48"
@@ -176,7 +175,7 @@ export default function Posts({ posts }: any) {
                     }
                   }}
                 >
-                  next page
+                  Next Page
                 </button>
               </div>
             </div>
