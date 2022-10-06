@@ -148,11 +148,8 @@ export default function Editor() {
       if (res) {
         setMode("update");
         setId(router.query.id as string);
+        setData(JSON.stringify(res));
       }
-
-      // setMode("update");
-      // setId(router.query.id as string);
-      // console.log(router.query.id);
     }
   }, [router.query.id]);
 
@@ -273,15 +270,6 @@ export default function Editor() {
             reader.readAsText(file);
           }}
         />
-        {/* <button
-          className="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-700 transition-all"
-          onClick={() => {
-            const id = prompt("What ID do you want");
-            GrabDataWithId(id!);
-          }}
-        >
-          Import from DB
-        </button> */}
         {mode === "update" ? (
           <button
             className="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-700 transition-all"

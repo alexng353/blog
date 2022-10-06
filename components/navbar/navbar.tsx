@@ -15,18 +15,26 @@ export default function NavBar() {
   const [latest, setLatest] = useState<Latest>(null as any);
   const [latestHover, setLatestHover] = useState(false);
   const [latestBanner, setLatestBanner] = useState(null as any);
+  const [showLatest, setShowLatest] = useState(false);
   useEffect(() => {
     fetch("/api/posts?id=latest")
       .then((res) => res.json())
       .then((data) => {
         // router.push(`/posts/${data.post.id}`);
         // console.log(data);
-        setLatest(data);
-        JSON.parse(data.content).find((item: any) => {
-          if (item.type === "banner") {
-            setLatestBanner(item);
+        if (data !== null) {
+          setLatest(data);
+          setShowLatest(true);
+          try {
+            JSON.parse(data.content).find((item: any) => {
+              if (item.type === "banner") {
+                setLatestBanner(item);
+              }
+            });
+          } catch (error) {
+            console.log(error);
           }
-        });
+        }
       });
   }, []);
   return (
@@ -34,33 +42,45 @@ export default function NavBar() {
       <div className="flex max-w-5xl w-full gap-4 relative">
         <NavLink href="/" text="Home" />
         <NavLink href="/posts" text="Posts" />
-        <button
-          className="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium relative flex items-center"
-          onMouseOver={() => {
-            setLatestHover(true);
-          }}
-          onMouseLeave={() => {
-            setLatestHover(false);
-          }}
-          onClick={() => {
-            router.push(`/posts/${latest.id}`);
-          }}
-        >
-          Latest Post
-          <div className="absolute top-10 left-10 z-50">
-            {latestHover && latest && (
-              <div className="bg-gray-200 text-black rounded-md p-2 shadow-xl w-64 text-left hover:bg-gray-300">
-                <a href={`/posts/${latest.id}`} className="w-full">
-                  <div className="text-lg">{latest.title}</div>
-                  <div className="text-sm">Author: {latest.author.name}</div>
-                  {latestBanner && (
-                    <img src={latestBanner.src} alt="" className="rounded-md" />
+        {showLatest && (
+          <button
+            className="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium relative flex items-center"
+            onMouseOver={() => {
+              setLatestHover(true);
+            }}
+            onMouseLeave={() => {
+              setLatestHover(false);
+            }}
+            onClick={() => {
+              router.push(`/posts/${latest.id}`);
+            }}
+          >
+            Latest Post
+            <div className="absolute top-10 left-10 z-50">
+              {latestHover && latest && (
+                <>
+                  {latest.id && (
+                    <div className="bg-gray-200 text-black rounded-md p-2 shadow-xl w-64 text-left hover:bg-gray-300">
+                      <a href={`/posts/${latest.id}`} className="w-full">
+                        <div className="text-lg">{latest.title}</div>
+                        <div className="text-sm">
+                          Author: {latest.author.name}
+                        </div>
+                        {latestBanner && (
+                          <img
+                            src={latestBanner.src}
+                            alt=""
+                            className="rounded-md"
+                          />
+                        )}
+                      </a>
+                    </div>
                   )}
-                </a>
-              </div>
-            )}
-          </div>
-        </button>
+                </>
+              )}
+            </div>
+          </button>
+        )}
       </div>
 
       {/* <div className="absolute right-0 top-0 h-16 py-3">
