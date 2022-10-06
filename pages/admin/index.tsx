@@ -70,7 +70,7 @@ export default function AdminPage() {
               </p>
             </div>
             <Chart />
-            <div className="lg:grid grid-cols-2 gap-x-8">
+            {/* <div className="lg:grid grid-cols-2 gap-x-8">
               {data &&
                 data.map((post: any) => {
                   const creation = new Date(post.createdAt);
@@ -110,7 +110,7 @@ export default function AdminPage() {
                     </div>
                   );
                 })}
-            </div>
+            </div> */}
             <Content />
           </div>
         </div>
