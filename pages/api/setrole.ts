@@ -11,7 +11,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         email: 'alexng353@gmail.com',
       },
       data: {
-        admin: true,
+        writer: true,
       },
     })
     .then(() => {
