@@ -117,6 +117,7 @@ export default function Editor() {
   const [mode, setMode] = useState<"create" | "update">("create");
   const [id, setId] = useState<string>("");
   const router = useRouter();
+  const [ready, setReady] = useState<boolean>(false);
   // function to generate json file from data and download
   function downloadJSON() {
     const element = document.createElement("a");
@@ -145,11 +146,17 @@ export default function Editor() {
     // if id is present, set mode to update
     if (router.query.id) {
       const res = GrabDataWithId(router.query.id as string);
+      console.log(router.query.id);
+
       if (res) {
         setMode("update");
         setId(router.query.id as string);
-        setData(JSON.stringify(res));
+        // setData(JSON.stringify(res));
       }
+
+      setReady(true);
+    } else {
+      setReady(true);
     }
   }, [router.query.id]);
 
@@ -211,21 +218,25 @@ export default function Editor() {
     if (Number(id).toString() === "NaN") {
       return false;
     }
+    setReady(false);
     fetch(`/api/posts?id=${id}`)
       .then((res) => res.json())
       .then((res) => {
         // console.log(res);
         if (res?.content) {
           setData(res.content);
-          console.log("update");
 
           setMode("update");
+          console.log(res);
+
           setId(id.toString());
+          setReady(true);
           return true;
         } else {
           // console.log(res);
 
           alert(`No post with ID ${id}`);
+          setReady(true);
         }
       });
   }
@@ -315,7 +326,7 @@ export default function Editor() {
             </a>
           </div>
 
-          {JSON.parse(data).length > 0 ? (
+          {ready && JSON.parse(data).length > 0 ? (
             JSON.parse(data).map((field: Field, index: any) => {
               // return <Render key={index} fields={[field]} />;
               return (

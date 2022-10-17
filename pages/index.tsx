@@ -4,6 +4,13 @@ import NavBar from "components/navbar";
 import { useEffect } from "react";
 import { PrismaClient } from "@prisma/client";
 
+// import Text from "components/render/components/text";
+import dynamic from "next/dynamic";
+
+const Text = dynamic(() => import("components/render/components/text"), {
+  ssr: false,
+});
+
 const prisma = new PrismaClient();
 export async function getStaticProps() {
   // get 3 latest posts
@@ -66,6 +73,8 @@ function NewsPreview({ post }: any) {
   useEffect(() => {
     // parse and sort backwards
     let tmp = JSON.parse(post.content).reverse();
+    // let tmp = JSON.parse(post.content);
+
     tmp.find((item: any) => {
       if (item.type === "banner") {
         setLatestBanner(item);
@@ -104,7 +113,9 @@ function NewsPreview({ post }: any) {
             // replace "at" with ","
             .replace(" at", ",")}
         </h2>
-        <p className="line-clamp-[10]">{firstText?.content}</p>
+        <p className="line-clamp-[10]">
+          <Text content={firstText?.content} justify={false} indent={false} />
+        </p>
       </div>
 
       {/* <p className="text-lg">{post.content}</p> */}

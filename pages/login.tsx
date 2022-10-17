@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function Test() {
   const [password, setPassword] = useState("");
@@ -76,12 +77,12 @@ export default function Test() {
           Login
         </button>
         <div className="w-full flex justify-center">
-          <a
+          <Link
             className="text-blue-600 hover:underline hover:text-blue-800 text-sm"
             href="/signup"
           >
-            Don't have an account? Sign up
-          </a>
+            <a>Don&apos;t have an account? Sign up</a>
+          </Link>
         </div>
       </div>
     </div>
