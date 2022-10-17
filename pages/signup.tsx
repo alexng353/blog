@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useState } from "react";
 
 export default function SignUp() {
@@ -73,12 +74,12 @@ export default function SignUp() {
           Sign Up
         </button>
         <div className="w-full flex justify-center">
-          <a
-            className="text-blue-600 hover:underline hover:text-blue-800 text-sm"
+          <Link
             href="/login"
+            className="text-blue-600 hover:underline hover:text-blue-800 text-sm"
           >
-            Have an account? Log in
-          </a>
+            <a>Have an account? Log in</a>
+          </Link>
         </div>
       </div>
     </div>
