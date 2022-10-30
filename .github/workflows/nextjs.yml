@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 env:
-  DATABSE_URL: ${{ secrets.DATABASE_URL }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
