@@ -1,8 +1,7 @@
-This is a Blog for one of my school clubs, the [VC Urban Economics club](https://vcue.ayo.icu).
+A blog
 
-# VC Urban Economics
+A landing page
 
-You can pretty much git clone the repo and change the landing page, then it will work like a normal blog. 
+A template
 
-Editor is at /admin/editor, before you can access the site you'll have to edit the postgres DB and set your own account to have the 'admin' and 'writer' priveleges.
-
+idc its MIT licensed do what you please with it
